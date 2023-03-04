@@ -1,0 +1,24 @@
+// Extract the authorization code from the URL query parameters
+const queryParams = new URLSearchParams(window.location.search);
+const code = queryParams.get('code');
+
+// Exchange the authorization code for an access token
+fetch('https://www.patreon.com/api/oauth2/token', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  body: `code=${code}&grant_type=authorization_code&client_id=<YOUR_CLIENT_ID>&client_secret=<YOUR_CLIENT_SECRET>&redirect_uri=<YOUR_REDIRECT_URL>`
+})
+.then(response => response.json())
+.then(data => {
+  // Store the access token in local storage
+  localStorage.setItem('access_token', data.access_token);
+  localStorage.setItem('refresh_token', data.refresh_token);
+
+  // Redirect the user to the home page of your application
+  window.location.replace('<YOUR_APPLICATION_HOME_PAGE>');
+})
+.catch(error => {
+  console.error('Error exchanging authorization code for access token:', error);
+});
